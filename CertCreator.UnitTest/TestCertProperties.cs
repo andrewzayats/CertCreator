@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 
 namespace CertCreator.UnitTest
@@ -76,6 +79,43 @@ namespace CertCreator.UnitTest
             initOids = codeSigningEku.Select(o => o.Id).ToArray();
 
             Assert.IsTrue(initOids.Length == extOids.Length && !initOids.Except(extOids).Any());
+        }
+
+        [TestMethod]
+        public void TestExtension_Policies()
+        {
+            var builder =
+                CertificateBuilderFactory.Instance.GetBuilder(CertificateBuilderFactory.CertBuilderType.SelfSigned);
+
+            builder.SubjectName = "CN=test01";
+
+            //var userNotice = new UserNotice(new NoticeReference("test", new[] {1, 2, 3}), "test");
+
+            var seq = new DerSequence(
+                //new DerSequence(
+                //    new DerSequence(new DerInteger(1)),
+                //    new DisplayText("test2")
+                //),
+                new DisplayText("test1")
+            );
+
+            builder.CertificatePoliciesDict =
+                new Dictionary<DerObjectIdentifier, IEnumerable<PolicyQualifierInfo>>
+                {
+                    {new DerObjectIdentifier("2.23.140.1.2.1"), null},
+                    {
+                        new DerObjectIdentifier("1.3.6.1.4.1.311.46.3"), new[]
+                        {
+                            new PolicyQualifierInfo("localhost"),
+                            new PolicyQualifierInfo(PolicyQualifierID.IdQtUnotice, seq),
+                        }
+                    }
+                };
+
+            var cert = builder.Build();
+
+            var bytes = cert.Export(X509ContentType.Cert);
+            File.WriteAllBytes(@"d:\Work\20170709\cert.cer", bytes);
         }
     }
 }

@@ -106,5 +106,10 @@ namespace CertCreator.Cryptography
         {
             certificateGenerator.AddExtension(X509Extensions.KeyUsage.Id, false, keyUsage);
         }
+
+        public static void AddCertificatePolicies(this X509V3CertificateGenerator certificateGenerator, CertificatePolicies certPolicies)
+        {
+            certificateGenerator.AddExtension(X509Extensions.CertificatePolicies, false, certPolicies);
+        }
     }
 }

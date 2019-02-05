@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
@@ -56,6 +57,13 @@ namespace CertCreator.Cryptography
         public bool IsSelfSigned { get; set; }
 
         public ISignatureConfig SignatureConfig { get; set; }
+
+        public CertificatePolicies CertificatePolicies { get; set; }
+
+        public Dictionary<DerObjectIdentifier, IEnumerable<PolicyQualifierInfo>> CertificatePoliciesDict
+        {
+            set => CertificatePolicies = CertUtility.GetCertPolicies(value);
+        }
 
         #endregion
 
@@ -157,6 +165,11 @@ namespace CertCreator.Cryptography
             if (SubjectAlternativeNames != null && SubjectAlternativeNames.Any())
             {
                 certificateGenerator.AddSubjectAlternativeNames(SubjectAlternativeNames);
+            }
+
+            if (CertificatePolicies != null)
+            {
+                certificateGenerator.AddCertificatePolicies(CertificatePolicies);
             }
 
             var signatureFactory = new Asn1SignatureFactory(SignatureAlgorithm, issuerKeyPair.Private, random);

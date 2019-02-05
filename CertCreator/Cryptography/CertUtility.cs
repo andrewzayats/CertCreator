@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
@@ -130,11 +133,40 @@ namespace CertCreator.Cryptography
             return importedKey;
         }
 
-        public KeyPurposeID GetKeyPurposeID(string oid)
+        public static KeyPurposeID GetKeyPurposeID(string oid)
         {
             var ci = typeof(KeyPurposeID).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).First();
             var obj = ci.Invoke(new object[] { oid });
             return obj as KeyPurposeID;
         }
+
+        public static CertificatePolicies GetCertPolicies(Dictionary<DerObjectIdentifier, IEnumerable<PolicyQualifierInfo>> policiesDict)
+        {
+            var policies = new List<PolicyInformation>();
+            foreach (var pair in policiesDict)
+            {
+                PolicyInformation info;
+
+                if (pair.Value == null || !pair.Value.Any())
+                {
+                    info = new PolicyInformation(pair.Key);
+                }
+                else
+                {                   
+                    var qualifiers = new Asn1EncodableVector();
+                    foreach (var qualifier in pair.Value)
+                    {
+                        qualifiers.Add(qualifier);
+                    }
+
+                    info = new PolicyInformation(pair.Key, new DerSequence(qualifiers));
+                }
+                policies.Add(info); 
+            }
+
+            return new CertificatePolicies(policies.ToArray());
+        }
+
+
     }
 }
