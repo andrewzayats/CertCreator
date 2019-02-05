@@ -13,13 +13,14 @@ namespace CertCreator
     {
         private static int Main(string[] args)
         {
-            var parseRes = Parser.Default.ParseArguments<SelfSignedCertArgs, CaCertArgs, IssuedCertArgs, BatchIssuedCertArgs>(args);
+            var parseRes = Parser.Default.ParseArguments<SelfSignedCertArgs, CaCertArgs, IssuedCertArgs, BatchIssuedCertArgs, ScomCertArgs>(args);
 
             var execRes = parseRes.MapResult(
                 (SelfSignedCertArgs info) => CreateSelfSignedCert(info),
                 (CaCertArgs info) => CreateCaCert(info),
                 (IssuedCertArgs info) => CreateIssuedCert(info),
                 (BatchIssuedCertArgs info) => CreateBatchIssuedCerts(info),
+                (ScomCertArgs info) => CreateScomCert(info),
                 errs => -1
                 );
             
@@ -89,6 +90,24 @@ namespace CertCreator
                 }
                 Console.WriteLine("Success!");
             });
+        }
+
+        private static int CreateScomCert(ScomCertArgs certArgs)
+        {
+            return ErrorWrapper(
+                () =>
+                    SingleCertActionWrapper(
+                        () =>
+                        {
+                            var issuerCertificate = CertUtility.LoadCertificate(certArgs.IssuerFilePath, certArgs.IssuerPassword);
+
+                            var builder = InitCertBuilder(certArgs.SubjectName, certArgs.ValidityYears, CertificateBuilderFactory.CertBuilderType.Scom);
+
+                            builder.IssuerCertificate = issuerCertificate;
+
+                            return builder.Build();
+                        },
+                        certArgs.SubjectOutputPath, certArgs.SubjectPassword));
         }
 
         #endregion

@@ -15,6 +15,7 @@ namespace CertCreator
             CA_CodeSign,
             CodeSign,
             ClientServer,
+            Scom,
             Empty
         }
 
@@ -76,6 +77,15 @@ namespace CertCreator
                     {
                         SignatureAlgorithm = SignatureAlgorithm,
                         SignatureConfig = SignatureConfig,
+                        Usages = new[] { KeyPurposeID.IdKPServerAuth, KeyPurposeID.IdKPClientAuth },
+                        NotAfter = DateTime.UtcNow.AddYears(10)
+                    };
+                case CertBuilderType.Scom:
+                    return new CertificateBuilder
+                    {
+                        SignatureAlgorithm = SignatureAlgorithm,
+                        SignatureConfig = SignatureConfig,
+                        KeyUsage = new KeyUsage(KeyUsage.DigitalSignature + KeyUsage.KeyEncipherment + KeyUsage.DataEncipherment),
                         Usages = new[] { KeyPurposeID.IdKPServerAuth, KeyPurposeID.IdKPClientAuth },
                         NotAfter = DateTime.UtcNow.AddYears(10)
                     };

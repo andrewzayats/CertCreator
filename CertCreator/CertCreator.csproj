@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineParsing\ScomCertArgs.cs" />
     <Compile Include="Cryptography\AlgorithmTypeHelper.cs" />
     <Compile Include="Cryptography\CertificateBuilder.cs" />
     <Compile Include="CertificateBuilderFactory.cs" />

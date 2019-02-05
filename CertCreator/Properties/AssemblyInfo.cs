@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Certificate Creator")]
 [assembly: AssemblyDescription("A little certificate creation utiity")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("VIAcode")]
+[assembly: AssemblyCompany("Andrew Zayats")]
 [assembly: AssemblyProduct("CreateCertificate")]
-[assembly: AssemblyCopyright("Copyright © VIAcode 2017")]
+[assembly: AssemblyCopyright("Copyright © Andrew Zayats 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]
 
 [assembly: InternalsVisibleTo("CertCreator.UnitTest,PublicKey = " +
                               "00240000048000009400000006020000" +
